@@ -1,20 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
-import { IoPeople } from "react-icons/io5";
-import { RiCircleFill } from "react-icons/ri";
-import { Rating } from "../Rating";
-import { CiShop } from "react-icons/ci";
-import Link from "next/link";
+import React from 'react'
+import { IoPeople } from 'react-icons/io5'
+import { RiCircleFill } from 'react-icons/ri'
+import { Rating } from '../Rating'
+import { CiShop } from 'react-icons/ci'
+import Link from 'next/link'
 
 export default function ActivityPage({ activity }) {
-  const { data } = activity;
+  const { data } = activity
   const formatRupiah = (price) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
       minimumFractionDigits: 0,
-    }).format(price);
-  };
+    }).format(price)
+  }
 
   const {
     name,
@@ -30,21 +30,22 @@ export default function ActivityPage({ activity }) {
     guaranteed,
     vendorName,
     activityVendorID,
-  } = data ? data : "";
+    id,
+  } = data ? data : ''
 
-  const jam = Math.floor(duration / 60);
-  const guarantee1 = guaranteed ? guaranteed.Guarantee1 : "";
-  const guarantee2 = guaranteed ? guaranteed.Guarantee2 : "";
-  const refundable = guaranteed ? guaranteed.Refundable : "";
-  const safe = guaranteed ? guaranteed.Safe : "";
+  const jam = Math.floor(duration / 60)
+  const guarantee1 = guaranteed ? guaranteed.Guarantee1 : ''
+  const guarantee2 = guaranteed ? guaranteed.Guarantee2 : ''
+  const refundable = guaranteed ? guaranteed.Refundable : ''
+  const safe = guaranteed ? guaranteed.Safe : ''
 
   return (
     <div className="">
       <div className="flex p-2 pb-3 gap-2 text-gray-300 text-xs">
         <h1>Home</h1>
-        <span>{">"}</span>
+        <span>{'>'}</span>
         <h2>Activity</h2>
-        <span>{">"}</span>
+        <span>{'>'}</span>
         <h4 className="text-black">{name}</h4>
       </div>
       <div className=" w-full flex gap-8 mb-4">
@@ -90,7 +91,9 @@ export default function ActivityPage({ activity }) {
                   <span className="font-bold flex flex-col justify-center text-2xl mt-[1px]">
                     <CiShop className="font-bold" />
                   </span>
-                  <p className="mt-1 text-sm font-bold text-black dark:text-white">{vendorName}</p>
+                  <p className="mt-1 text-sm font-bold text-black dark:text-white">
+                    {vendorName}
+                  </p>
                 </div>
               </Link>
             </div>
@@ -177,8 +180,15 @@ export default function ActivityPage({ activity }) {
             ) : null}
             <h1 className="flex justify-center">{safe}</h1>
           </div>
+          <div className=''>
+            <Link href={`/activity/checkout/${id}`}>
+              <button className="rounded-lg bg-[#FF7A00] w-full h-12 mt-4 text-white font-bold text-lg">
+                Book Now
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

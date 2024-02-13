@@ -27,41 +27,42 @@ export default function LoginScreen() {
   } = useForm();
 
   const submitHandler = async ({ email, password }) => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const response = await fetch(
-        "https://api.dev.vacaba.id/api/v1/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Api-Key": "VACABADEV",
-            "X-Device-Token": "VACABADEV",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Gagal Login");
+    const response = await fetch(
+      "https://api.dev.vacaba.id/api/v1/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": "VACABADEV",
+          "X-Device-Token": "VACABADEV",
+        },
+        body: JSON.stringify({ email, password }),
       }
+    );
 
-      const data = await response.json();
-      const accessToken = data.data;
-      localStorage.setItem("token", accessToken.access.token);
-      localStorage.setItem("refreshToken", accessToken.refresh.token);
-
-      console.log("Data aktivitas pengguna:", data);
-
-      router.push("/");
-    } catch (error) {
-      console.error("Terjadi kesalahan:", error);
-      toast.error(getError(error));
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      throw new Error("Gagal Login");
     }
-  };
+
+    const data = await response.json();
+    const accessToken = data.data;
+    localStorage.setItem("token", accessToken.access.token);
+    localStorage.setItem("refreshToken", accessToken.refresh.token);
+
+    console.log("Data aktivitas pengguna:", data);
+
+    router.push(redirect || "/"); // Mengarahkan kembali ke halaman yang ditentukan
+  } catch (error) {
+    console.error("Terjadi kesalahan:", error);
+    toast.error(getError(error));
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Layout title="Login">

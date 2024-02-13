@@ -52,11 +52,11 @@ function VendorContent() {
   console.log("packageVendor", packageVendor);
   console.log("vendorType", vendorType);
 
-  useEffect(() => {
-    if (selectedVendor === "") {
-      setPackageVendor([]);
-    }
-  }, [activityVendor, selectedVendor, loading, allPackage]);
+  // useEffect(() => {
+  //   if (selectedVendor === "") {
+  //     setPackageVendor([]);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (loading) {
@@ -64,6 +64,7 @@ function VendorContent() {
       setCurrentAllPackagePage(1);
     }
   }, [loading]);
+  
 
   return (
     <div className="mt-6 ml-6">
