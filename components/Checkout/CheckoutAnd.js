@@ -10,9 +10,11 @@ export default function CheckOutAnd({ dataCheckout }) {
       minimumFractionDigits: 0,
     }).format(price)
   }
+  const price = formatRupiah(dataCheckout.productPrice * dataCheckout.numberOfPerson)
+  console.log(price)
   return (
     <div className='flex'>
-      <div className="flex gap-2 w-full">
+      <div className="flex gap-2 w-full mx-6">
         <img src={dataCheckout.productThumbnail} alt="" className="w-60" />
         <div className="w-full">
           <h1 className="text-lg font-bold">{dataCheckout.productName}</h1>
@@ -30,7 +32,7 @@ export default function CheckOutAnd({ dataCheckout }) {
           </div>
           <div className="border-b pb-4">
             <h1 className=" font-semibold">
-              Total Price: {formatRupiah(dataCheckout.productPrice)}
+              Total Price: {price}
             </h1>
           </div>
           <div className=" space-y-1">
@@ -41,7 +43,7 @@ export default function CheckOutAnd({ dataCheckout }) {
             <div className="flex justify-between  pb-1 border-b">
               <h1 className="text-sm">Basic Fee</h1>
               <h2 className="font-bold">
-                {formatRupiah(dataCheckout.basicFee)}
+                {price}
               </h2>
             </div>
             <div className="flex justify-between  pb-1 border-b">
@@ -53,15 +55,15 @@ export default function CheckOutAnd({ dataCheckout }) {
             <div className="flex justify-between  pb-1 border-b ">
               <h1 className="text-sm">Total</h1>
               <h2 className="font-bold">
-                {formatRupiah(dataCheckout.totalFee)}
+                {price}
               </h2>
             </div>
           </div>
         </div>
       </div>
-      <div className='w-fit'>
+      {/* <div className='w-fit'>
         <h1>Payment Method</h1>
-      </div>
+      </div> */}
     </div>
   )
 }

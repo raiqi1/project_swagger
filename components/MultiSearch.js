@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
 export const MultiSearch = () => {
   const router = useRouter(); // Menggunakan router dari Next.js
@@ -7,13 +7,13 @@ export const MultiSearch = () => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-    const day = formData.get('day');
-    const name = formData.get('name');
+    const day = formData.get("day");
+    const name = formData.get("name");
 
     // Navigasi ke halaman destinasi dengan query params yang sesuai
     router.push({
-      pathname: '/destinations',
-      query: { page: '1', limit: '10', day, name },
+      pathname: "/destinations",
+      query: { page: "1", limit: "10", day, name, latitude: 1, longitude: 1 },
     });
   };
 
@@ -23,10 +23,7 @@ export const MultiSearch = () => {
   return (
     <form onSubmit={handleSearch}>
       <div className="join">
-        <select
-          name="day"
-          className="join-item select select-bordered"
-        >
+        <select name="day" className="join-item select select-bordered">
           {days.map((d) => (
             <option key={d} value={d}>
               {d}
