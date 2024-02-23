@@ -175,13 +175,13 @@ export default function CheckoutSuccessPage() {
         ) {
           // Jika pembukaan tab baru diblokir, redirect ke halaman pembayaran sukses
           router.push(`/booking/${bookingId}`)
-          setIsLoadingSuccessPage(false) // Hentikan status loading jika redirect terjadi
+          setIsLoadingSuccessPage(false) 
         } else {
           const interval = setInterval(() => {
             if (paymentWindow.closed) {
               router.push(`/booking/${bookingId}`)
               clearInterval(interval)
-              setIsLoadingSuccessPage(false) // Hentikan status loading jika tab ditutup
+              setIsLoadingSuccessPage(false) 
             }
           }, 1000)
         }
@@ -195,7 +195,6 @@ export default function CheckoutSuccessPage() {
   console.log('paymentSuccess', paymentSuccess)
 
   console.log('paymentData', paymentData)
-  console.log("selectedChannel", selectedChannel)
 
   return (
     <Layout>

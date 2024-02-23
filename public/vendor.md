@@ -92,7 +92,14 @@ export default function VendorScreen() {
 
   useEffect(() => {
     fetchActivity(currentAllActivityPage);
-  }, [currentAllActivityPage, searchQuery, selectedTypes, minPrice, maxPrice]);
+  }, [
+    currentAllActivityPage,
+    searchQuery,
+    selectedTypes,
+    minPrice,
+    maxPrice,
+    setLoading,
+  ]);
 
   useEffect(() => {
     fetchPackage(currentAllPackagePage);
@@ -127,7 +134,6 @@ export default function VendorScreen() {
 
   const fetchActivity = async (page) => {
     try {
-      setLoading(true);
       setLoadingVendorType(true);
       const data = await fetchActivityData(
         page,
@@ -137,7 +143,6 @@ export default function VendorScreen() {
       );
       setAllActivityVendor(data.data);
       setTotalActivityPages(Math.ceil(data.meta.total / data.meta.limit));
-      setLoading(false);
       setLoadingVendorType(false);
       setNotFound(data.data.length === 0);
     } catch (error) {
@@ -148,7 +153,6 @@ export default function VendorScreen() {
   const fetchPackage = async (page) => {
     try {
       setLoading(true);
-      setLoadingVendorType(true);
       const dataPackage = await fetchPackageData(
         page,
         searchQuery,
@@ -160,7 +164,6 @@ export default function VendorScreen() {
         Math.ceil(dataPackage.meta.total / dataPackage.meta.limit)
       );
       setLoading(false);
-      setLoadingVendorType(false);
       setNotFoundPackage(dataPackage.data.length === 0);
     } catch (error) {
       setLoading(false);
@@ -170,7 +173,6 @@ export default function VendorScreen() {
   const fetchActivityVendor = async (page) => {
     try {
       setLoading(true);
-      setLoadingVendorType(true);
       const data = await fetchActivityVendorData(
         selectedVendor,
         page,
@@ -181,7 +183,6 @@ export default function VendorScreen() {
       setActivityVendor(data.data);
       setTotalActivityVendor(Math.ceil(data.meta.total / data.meta.limit));
       setLoading(false);
-      setLoadingVendorType(false);
       setNotFound(data.data.length === 0);
     } catch (error) {
       setLoading(false);
@@ -191,7 +192,6 @@ export default function VendorScreen() {
   const fetchPackageVendor = async (page) => {
     try {
       setLoading(true);
-      setLoadingVendorType(true);
       const data = await fetchPackageVendorData(
         selectedVendor,
         page,
@@ -202,7 +202,6 @@ export default function VendorScreen() {
       setPackageVendor(data.data);
       setTotalPackageVendor(Math.ceil(data.meta.total / data.meta.limit));
       setLoading(false);
-      setLoadingVendorType(false);
       setNotFoundPackage(data.data.length === 0);
     } catch (error) {
       setLoading(false);
@@ -262,20 +261,10 @@ export default function VendorScreen() {
   };
 
   const searchActivity = () => {
-    // if (tempSearchQuery === "") {
-    //   fetchActivity(1);
-    //   fetchPackage(1);
-    // }
     setLoadingVendorType(false);
-    setSearchQuery(tempSearchQuery);
+    setSearchQuery(tempSearchQuery); // Terapkan nilai pencarian saat tombol "Cari" ditekan
     setCurrentPage(1);
-    fetchActivityVendorData(1);
-    fetchPackageVendorData(1);
-    // setAllPackage([]);
-    // fetchActivity([]);
-    // setCurrentActivityVendor(1);
-
-    // setLoading(false);
+    fetchActivity([]);
   };
 
   console.log("allPackage", allPackage);

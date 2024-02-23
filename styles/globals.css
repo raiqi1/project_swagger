@@ -19,8 +19,8 @@ body {
   html,
   body {
     /* Properti CSS khusus untuk tema gelap */
-    background-color: #232A3C;
-    color: #fff; /* warna teks putih */
+    background-color: #FFFFFF;
+    color: #000; /* warna teks putih */
   }
 }
 

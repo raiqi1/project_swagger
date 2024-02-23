@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
-import VendorTypes from './VendorTypes'
-import VendorOptions from './VendorOption'
-import ActivityCardVendor from './ActivityCardVendor'
-import PaginationVendor from './PaginationVendor'
-import PriceFilter from '../Activity/PriceFilter'
-import { VendorContext } from '../../pages/vendor'
-import PackageCardVendor from './PackageCardVendor'
+import React, { useContext, useEffect, useState } from "react";
+import VendorTypes from "./VendorTypes";
+import VendorOptions from "./VendorOption";
+import ActivityCardVendor from "./ActivityCardVendor";
+import PaginationVendor from "./PaginationVendor";
+import PriceFilter from "../Activity/PriceFilter";
+import { VendorContext } from "../../pages/vendor";
+import PackageCardVendor from "./PackageCardVendor";
 
 function VendorContent() {
   const {
@@ -46,29 +46,68 @@ function VendorContent() {
     notFoundPackage,
     setNotFoundPackage,
     filtering,
-  } = useContext(VendorContext)
+    tempMinPrice,
+    setTempMinPrice,
+    tempMaxPrice,
+    setTempMaxPrice,
+    handleFilterChange,
+    tempSearchQuery,
+    setSearchQuery,
+    handleSearchChange,
+    searchActivity,
+    loadingVendorType,
+    setLoadingVendorType,
+  } = useContext(VendorContext);
 
-  const [activeDetail, setActiveDetail] = useState('products')
-  const [showActivityNotFound, setShowActivityNotFound] = useState(false)
+  const [activeDetail, setActiveDetail] = useState("products");
+  const [showActivityNotFound, setShowActivityNotFound] = useState(false);
 
-  console.log('activityVendor', activityVendor)
-  console.log('selectedVendor', selectedVendor)
-  console.log('allPackage', allPackage)
-  console.log('packageVendor', packageVendor)
-  console.log('vendorType', vendorType)
+  console.log("activityVendor", activityVendor);
+  console.log("selectedVendor", selectedVendor);
+  console.log("allPackage", allPackage);
+  console.log("packageVendor", packageVendor);
+  console.log("vendorType", vendorType);
 
   // useEffect(() => {
+  //   // Reset pagination saat loading
   //   if (loading) {
-  //     setCurrentAllActivityPage(1)
-  //     setCurrentAllPackagePage(1)
+  //     setCurrentAllActivityPage(1);
+  //     setCurrentPackageVendor(1);
   //   }
-  // }, [loading])
+  // }, [loading]);
 
+  // useEffect(() => {
+  //   if (selectedVendor === "") {
+  //     setActivityVendor(allActivityVendor);
+  //     setPackageVendor(allPackage);
+  //   }
+  // }, [selectedVendor]);
   return (
     <div className="mt-6 ml-6">
       <h1 className="text-2xl font-bold">Semua Vendor</h1>
       <div className="flex">
         <div className="mr-4">
+          <div className="flex flex-col gap-3">
+            <input
+              type="text"
+              value={tempSearchQuery} // Gunakan nilai sementara pencarian
+              onChange={handleSearchChange}
+              placeholder="Cari aktivitas..."
+              className="border rounded py-1 px-2 mr-2"
+            />
+            <button
+              onClick={searchActivity}
+              className="bg-blue-500 text-white py-1 px-2 rounded mr-2"
+            >
+              Cari
+            </button>
+            <button
+              onClick={handleClearFilter}
+              className="bg-red-500 text-white py-1 px-2 rounded"
+            >
+              Clear Filter
+            </button>
+          </div>
           <VendorTypes
             activity={activity}
             selectedTypes={selectedTypes}
@@ -85,8 +124,8 @@ function VendorContent() {
                 selectedVendor={selectedVendor}
                 handleVendorChange={handleVendorChange}
                 style={{
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: '#888 #f1f1f1',
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "#888 #f1f1f1",
                 }}
               />
             ))}
@@ -94,12 +133,13 @@ function VendorContent() {
 
           <div>
             <PriceFilter
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              setMinPrice={setMinPrice}
-              setMaxPrice={setMaxPrice}
+              minPrice={tempMinPrice}
+              maxPrice={tempMaxPrice}
+              setMinPrice={setTempMinPrice}
+              setMaxPrice={setTempMaxPrice}
               handleClearFilter={handleClearFilter}
               filtering={filtering}
+              handleFilterChange={handleFilterChange}
             />
           </div>
         </div>
@@ -109,11 +149,11 @@ function VendorContent() {
             <ul className="flex gap-8 w-full mt-4">
               <li className="">
                 <button
-                  onClick={() => setActiveDetail('products')}
+                  onClick={() => setActiveDetail("products")}
                   className={`transition ${
-                    activeDetail === 'products'
-                      ? 'border-b-2 border-black text-black'
-                      : 'border-b hover:border-b-2 hover:border-black'
+                    activeDetail === "products"
+                      ? "border-b-2 border-black text-black"
+                      : "border-b hover:border-b-2 hover:border-black"
                   }`}
                 >
                   Products
@@ -121,11 +161,11 @@ function VendorContent() {
               </li>
               <li className="">
                 <button
-                  onClick={() => setActiveDetail('packagesection')}
+                  onClick={() => setActiveDetail("packagesection")}
                   className={`transition ${
-                    activeDetail === 'packagesection'
-                      ? 'border-b-2 border-black text-black'
-                      : 'border-b hover:border-b-2 hover:border-black'
+                    activeDetail === "packagesection"
+                      ? "border-b-2 border-black text-black"
+                      : "border-b hover:border-b-2 hover:border-black"
                   }`}
                 >
                   Packages
@@ -133,16 +173,18 @@ function VendorContent() {
               </li>
             </ul>
             <div>
-              {activeDetail === 'products' && (
+              {activeDetail === "products" && (
                 <section className="mt-4 mb-4 flex flex-col ">
                   <div className="flex gap-5">
                     <div className="flex flex-wrap gap-7">
                       {!loading &&
-                        selectedVendor === '' &&
+                        !loadingVendorType &&
+                        selectedVendor === "" &&
                         allActivityVendor.map((a) => (
                           <ActivityCardVendor activity={a} key={a.id} />
                         ))}
                       {!loading &&
+                        !loadingVendorType &&
                         activityVendor.map((a) => (
                           <ActivityCardVendor activity={a} key={a.id} />
                         ))}
@@ -160,42 +202,49 @@ function VendorContent() {
                       </div>
                       <div>
                         {!loading &&
+                          !loadingVendorType &&
                           notFound &&
-                          activeDetail === 'products' && (
+                          activeDetail === "products" && (
                             <p>Tidak ada aktivitas yang ditemukan.</p>
                           )}
                       </div>
                     </div>
                   </div>
                   <div className="justify-center flex">
-                    {!loading && activityVendor.length > 0 ? (
+                    {!loading &&
+                    !loadingVendorType &&
+                    activityVendor.length > 0 ? (
                       <PaginationVendor
                         currentPage={currentActivityVendor}
                         totalPages={totalActivityVendor}
                         setCurrentPage={setCurrentActivityVendor}
                       />
                     ) : (
-                      ''
+                      ""
                     )}
-                    {!loading && selectedVendor === '' && (
-                      <PaginationVendor
-                        currentPage={currentAllActivityPage}
-                        totalPages={totalActivityPages}
-                        setCurrentPage={setCurrentAllActivityPage}
-                      />
-                    )}
+                    {!loading &&
+                      !loadingVendorType &&
+                      selectedVendor === "" && (
+                        <PaginationVendor
+                          currentPage={currentAllActivityPage}
+                          totalPages={totalActivityPages}
+                          setCurrentPage={setCurrentAllActivityPage}
+                        />
+                      )}
                   </div>
                 </section>
               )}
-              {activeDetail === 'packagesection' && (
+              {activeDetail === "packagesection" && (
                 <section className="mt-4 mb-4 flex flex-col">
                   <div className="flex gap-5">
                     {!loading &&
-                      selectedVendor === '' &&
+                      !loadingVendorType &&
+                      selectedVendor === "" &&
                       allPackage.map((p, i) => (
                         <PackageCardVendor packageCard={p} key={i} />
                       ))}
                     {!loading &&
+                      !loadingVendorType &&
                       packageVendor.map((c, i) => (
                         <PackageCardVendor packageCard={c} key={i} />
                       ))}
@@ -212,28 +261,32 @@ function VendorContent() {
                       )}
                     </div>
                     <div>
-                      {!loading && notFoundPackage && (
+                      {!loading && !loadingVendorType && notFoundPackage && (
                         <p>Tidak ada package yang ditemukan.</p>
                       )}
                     </div>
                   </div>
                   <div className="justify-center flex">
-                    {!loading && packageVendor.length > 0 ? (
+                    {!loading &&
+                    !loadingVendorType &&
+                    packageVendor.length > 0 ? (
                       <PaginationVendor
                         currentPage={currentPackageVendor}
                         totalPages={totalPackageVendor}
                         setCurrentPage={setCurrentPackageVendor}
                       />
                     ) : (
-                      ''
+                      ""
                     )}
-                    {!loading && selectedVendor === '' && (
-                      <PaginationVendor
-                        currentPage={currentAllPackagePage}
-                        totalPages={totalPackagePages}
-                        setCurrentPage={setCurrentAllPackagePage}
-                      />
-                    )}
+                    {!loading &&
+                      !loadingVendorType &&
+                      selectedVendor === "" && (
+                        <PaginationVendor
+                          currentPage={currentAllPackagePage}
+                          totalPages={totalPackagePages}
+                          setCurrentPage={setCurrentAllPackagePage}
+                        />
+                      )}
                   </div>
                 </section>
               )}
@@ -242,7 +295,7 @@ function VendorContent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default VendorContent
+export default VendorContent;

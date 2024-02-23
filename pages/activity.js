@@ -10,7 +10,10 @@ export default function ActivityScreen() {
   const [totalPages, setTotalPages] = useState(1);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [tempMinPrice, setTempMinPrice] = useState("");
+  const [tempMaxPrice, setTempMaxPrice] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [tempSearchQuery, setTempSearchQuery] = useState(""); // State untuk menyimpan nilai sementara pencarian
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -36,7 +39,7 @@ export default function ActivityScreen() {
       const totalPages = Math.ceil(data.meta.total / 2);
       setTotalPages(totalPages);
       setLoading(false);
-      setNotFound(data.data.length === 0); // Set notFound jika data tidak ditemukan
+      setNotFound(data.data.length === 0);
     } catch (error) {
       console.error("Terjadi kesalahan:", error);
       setLoading(false);
@@ -53,19 +56,30 @@ export default function ActivityScreen() {
 
   const handleFilterChange = () => {
     setLoading(true);
+    setMinPrice(tempMinPrice);
+    setMaxPrice(tempMaxPrice);
     setCurrentPage(1);
   };
 
   const handleClearFilter = () => {
     setMinPrice("");
     setMaxPrice("");
-    // setSearchQuery("");
+    setTempMinPrice("");
+    setTempMaxPrice("");
+    setTempSearchQuery(""); // Kosongkan nilai pencarian sementara
     setLoading(false);
     setCurrentPage(1);
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    setTempSearchQuery(e.target.value); // Simpan nilai pencarian sementara
+  };
+
+  const searchActivity = () => {
+    setSearchQuery(tempSearchQuery); // Terapkan nilai pencarian saat tombol "Cari" ditekan
+    setLoading(true);
+    setCurrentPage(1);
+    fetchActivity(1);
   };
 
   return (
@@ -79,16 +93,28 @@ export default function ActivityScreen() {
               <div>
                 <input
                   type="text"
-                  value={searchQuery}
+                  value={tempSearchQuery} // Gunakan nilai sementara pencarian
                   onChange={handleSearchChange}
                   placeholder="Cari aktivitas..."
                   className="border rounded py-1 px-2 mr-2"
                 />
+                <button
+                  onClick={searchActivity}
+                  className="bg-blue-500 text-white py-1 px-2 rounded mr-2"
+                >
+                  Cari
+                </button>
+                <button
+                  onClick={handleClearFilter}
+                  className="bg-red-500 text-white py-1 px-2 rounded"
+                >
+                  Clear Filter
+                </button>
                 <PriceFilter
-                  minPrice={minPrice}
-                  maxPrice={maxPrice}
-                  setMinPrice={setMinPrice}
-                  setMaxPrice={setMaxPrice}
+                  minPrice={tempMinPrice}
+                  maxPrice={tempMaxPrice}
+                  setMinPrice={setTempMinPrice}
+                  setMaxPrice={setTempMaxPrice}
                   handleFilterChange={handleFilterChange}
                   handleClearFilter={handleClearFilter}
                 />
