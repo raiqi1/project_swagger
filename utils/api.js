@@ -1,3 +1,5 @@
+import { toast } from "react-toastify"
+
 export async function fetchVendorData(selectedTypes, searchQuery) {
   try {
     const response = await fetch(
@@ -95,6 +97,7 @@ export async function fetchActivityVendorData(
 
     if (!response.ok) {
       throw new Error('Gagal mengambil data aktivitas vendor')
+      
     }
     const data = await response.json()
     return data
@@ -157,80 +160,3 @@ export async function fetchPackageVendorData(
     throw error
   }
 }
-
-// payment
-
-// export const fetchPointData = async (token) => {
-//   try {
-//     const response = await fetch(`https://api.dev.vacaba.id/api/v1/points`, {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${token}`,
-//         'X-Api-Key': 'VACABADEV',
-//       },
-//     })
-
-//     if (!response.ok) {
-//       throw new Error('Gagal mengambil data poin')
-//     }
-
-//     const data = await response.json()
-//     return data.data
-//   } catch (err) {
-//     console.log(err.message)
-//     return null
-//   }
-// }
-
-// export const fetchPaymentMethods = async (token) => {
-//   try {
-//     const response = await fetch(
-//       `https://api.dev.vacaba.id/api/v1/payments/methods`,
-//       {
-//         method: 'GET',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           Authorization: `Bearer ${token}`,
-//           'X-Api-Key': 'VACABADEV',
-//         },
-//       },
-//     )
-
-//     if (!response.ok) {
-//       throw new Error('Gagal mengambil metode pembayaran')
-//     }
-
-//     const data = await response.json()
-//     return data.data
-//   } catch (err) {
-//     console.log(err.message)
-//     return null
-//   }
-// }
-
-// export const fetchCheckoutData = async (id, token) => {
-//   try {
-//     const response = await fetch(
-//       `https://api.dev.vacaba.id/api/v1/bookings/${id}`,
-//       {
-//         method: 'GET',
-//         headers: {
-//           'Content-Type': 'application/json',
-//           Authorization: `Bearer ${token}`,
-//           'X-Api-Key': 'VACABADEV',
-//         },
-//       },
-//     )
-
-//     if (!response.ok) {
-//       throw new Error('Gagal mengambil data checkout')
-//     }
-
-//     const data = await response.json()
-//     return data.data
-//   } catch (err) {
-//     console.log(err.message)
-//     return null
-//   }
-// }

@@ -9,6 +9,7 @@ import {
   fetchTypeVendorData,
 } from "../utils/api";
 import VendorContent from "../components/Vendor/VendorContent";
+import { set } from "mongoose";
 
 export const VendorContext = createContext();
 
@@ -268,11 +269,15 @@ export default function VendorScreen() {
     // }
     setLoadingVendorType(false);
     setSearchQuery(tempSearchQuery);
-    setCurrentPage(1);
-    fetchActivityVendorData(1);
-    fetchPackageVendorData(1);
+    // setCurrentAllActivityPage(1);
+    // setCurrentAllPackagePage(1);
+    // setCurrentPage(1);
+    // setCurrentActivityVendor(1);
+    // setCurrentPackageVendor(1);
+
+    setLoading(true);
     // setAllPackage([]);
-    // fetchActivity([]);
+    // fetchActivity(1);
     // setCurrentActivityVendor(1);
 
     // setLoading(false);

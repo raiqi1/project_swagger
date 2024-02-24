@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import DestinationPage from "../components/Destinations";
 import { useRouter } from "next/router";
+import { set } from "mongoose";
 
 export default function Page() {
   const router = useRouter();
@@ -10,6 +11,10 @@ export default function Page() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [paginationLoading, setPaginationLoading] = useState(false);
 
   // Fungsi untuk mengambil data destinasi dari API
   const fetchDestinations = async (queryParams) => {
@@ -44,16 +49,35 @@ export default function Page() {
   };
 
   useEffect(() => {
-    const { page = "", limit = "", day = "", name = "" } = router.query;
+    const { page = 1, limit = 10, day = 1, name = "" } = router.query;
     const queryParams = `?page=${page}&limit=${limit}&day=${day}&name=${name}`;
     fetchDestinations(queryParams);
-  }, [router.query]);
+  }, [
+    router.query.page,
+    router.query.limit,
+    router.query.day,
+    router.query.name,
+    router.query,
+  ]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     router.push({
       pathname: router.pathname,
       query: { ...router.query, page: page },
+    });
+  };
+
+  const handleSearchChange = (e) => {
+    setTempSearchQuery(e.target.value);
+  };
+
+  const handleSearch = async () => {
+    setSearchQuery(tempSearchQuery);
+    setCurrentPage(1);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, page: 1, name: tempSearchQuery },
     });
   };
 
@@ -81,38 +105,59 @@ export default function Page() {
     <Layout>
       <div className="header mt-6 ml-6 font-['Poppins']">
         <h2 className="text-4xl font-bold dark:text-white">Mau Kemana?</h2>
-        {loading && <p>Loading...</p>}
+        {loading && (
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mx-auto mt-4"></div>
+        )}
         {error && <p>{error}</p>}
-        <div className="flex flex-row flex-wrap justify-around w-4/5 mx-auto">
-          {desData.map((data, index) => (
-            <DestinationPage data={data} key={index} />
-          ))}
-        </div>
-        <div className="pagination mt-4 flex justify-center items-center">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            className={`px-3 py-1 rounded-lg mr-2 focus:outline-none ${
-              currentPage === 1
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-white text-blue-500"
-            }`}
-            disabled={currentPage === 1}
-          >
-            Previous
+        <div className="search-container">
+          <input
+            type="text"
+            value={tempSearchQuery}
+            onChange={handleSearchChange}
+            placeholder="Cari destinasi..."
+            className="search-input"
+          />
+          <button onClick={handleSearch} className="search-button">
+            Cari
           </button>
-          {renderPagination()}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            className={`px-3 py-1 rounded-lg ml-2 focus:outline-none ${
-              currentPage === totalPages
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-white text-blue-500"
-            }`}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
+          {searchLoading && (
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+          )}
         </div>
+        {!loading && desData.length > 0 && (
+          <div className="flex flex-row flex-wrap justify-around w-4/5 mx-auto">
+            {desData.map((data, index) => (
+              <DestinationPage data={data} key={index} />
+            ))}
+          </div>
+        )}
+        {!loading && (
+          <div className="pagination mt-4 flex justify-center items-center">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              className={`px-3 py-1 rounded-lg mr-2 focus:outline-none ${
+                currentPage === 1
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-white text-blue-500"
+              }`}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            {renderPagination()}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              className={`px-3 py-1 rounded-lg ml-2 focus:outline-none ${
+                currentPage === totalPages
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-white text-blue-500"
+              }`}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </Layout>
   );
