@@ -1,28 +1,33 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import { AiOutlineQuestionCircle } from "react-icons/ai";
 
 export default function PaymentMethods({
   p,
   selectedChannel,
   handleChannelChange,
 }) {
-  // const [selectedChannel, setSelectedChannel] = useState('')
+  console.log("p", p);
+  const pdfUrl =
+    p.channels.find((channel) => channel.paymentInstructionsDoc)
+      ?.paymentInstructionsDoc || "";
 
-  // const handleChannelChange = (channel) => {
-  //   setSelectedChannel(channel)
-  //   console.log('Nilai yang dipilih:', channel)
-  // }
-
-  console.log('p', p)
-  // const pdfUrl = p.channels.map((channel) => channel.paymentInstructionsDoc)
-
-  // const pdfUrl = 'https://storage.googleapis.com/ipaymu-docs/cara-pembayaran/constore.pdf';
   return (
     <div className="w-full">
-     {/* <PdfReader/> */}
       <div className="flex mb-2 font-bold items-center">
         <h1 className="mr-2">{p.name}</h1>
-        {/* <h1 className="mr-2">{p.description}</h1> */}
-        <h1 className="mr-2">{p.code}</h1>
+        {pdfUrl && (
+          <a
+            href={pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="How to Pay ?"
+          >
+            <AiOutlineQuestionCircle className="w-6 h-6" />
+            <span className="ml-1 opacity-0 transition-opacity duration-0 absolute text-xs">
+              How to Pay 
+            </span>
+          </a>
+        )}
       </div>
       <div className="">
         {p.channels.map((channel, i) => (
@@ -35,7 +40,6 @@ export default function PaymentMethods({
               checked={selectedChannel === channel.code}
               onChange={() => handleChannelChange(channel.code)}
               className="peer hidden"
-              // checked
             />
             <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
             <label
@@ -52,5 +56,5 @@ export default function PaymentMethods({
         ))}
       </div>
     </div>
-  )
+  );
 }

@@ -1,93 +1,93 @@
-import React, { useEffect, useState } from 'react'
-import Layout from '../../../components/Layout'
-import CheckOutAndPayment from '../../../components/Checkout/CheckOutAndPayment'
-import { useRouter } from 'next/router'
-import PaymentMethods from '../../../components/Checkout/PaymentMethods'
-import Switch from 'react-switch'
+import React, { useEffect, useState } from "react";
+import Layout from "../../../components/Layout";
+import CheckOutAndPayment from "../../../components/Checkout/CheckOutAndPayment";
+import { useRouter } from "next/router";
+import PaymentMethods from "../../../components/Checkout/PaymentMethods";
+import Switch from "react-switch";
 import {
   fetchPointDataAPI,
   fetchPaymentMethodsAPI,
   fetchCheckoutDataAPI,
   fetchCheckoutSuccessDataAPI,
   postPaymentAPI,
-} from '../../../tool/apipayment'
-import { toast } from 'react-toastify'
-import IconPayment from '../../../components/Payment/IconPayment'
+} from "../../../tool/apipayment";
+import { toast } from "react-toastify";
+import IconPayment from "../../../components/Payment/IconPayment";
 
 export default function CheckoutSuccessPage() {
-  const router = useRouter()
-  const [dataCheckout, setDataCheckout] = useState({})
-  const [paymentData, setPaymentData] = useState({})
-  const [selectedChannel, setSelectedChannel] = useState('')
-  const [paymentSuccess, setPaymentSuccess] = useState({})
-  const [usePoint, setUsePoint] = useState(false)
-  const [pointData, setPointData] = useState({})
-  const [originalTotalFee, setOriginalTotalFee] = useState(0)
-  const [discountedTotalFee, setDiscountedTotalFee] = useState(0)
-  const [dataCheckoutMax, setDataCheckoutMax] = useState({})
-  const [isLoadingPayment, setIsLoadingPayment] = useState(false) // State untuk loading tombol bayar
-  const [isLoading, setIsLoading] = useState(true)
-  const [isLoadingSuccessPage, setIsLoadingSuccessPage] = useState(false)
+  const router = useRouter();
+  const [dataCheckout, setDataCheckout] = useState({});
+  const [paymentData, setPaymentData] = useState({});
+  const [selectedChannel, setSelectedChannel] = useState("");
+  const [paymentSuccess, setPaymentSuccess] = useState({});
+  const [usePoint, setUsePoint] = useState(false);
+  const [pointData, setPointData] = useState({});
+  const [originalTotalFee, setOriginalTotalFee] = useState(0);
+  const [discountedTotalFee, setDiscountedTotalFee] = useState(0);
+  const [dataCheckoutMax, setDataCheckoutMax] = useState({});
+  const [isLoadingPayment, setIsLoadingPayment] = useState(false); // State untuk loading tombol bayar
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSuccessPage, setIsLoadingSuccessPage] = useState(false);
 
   const token =
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const fetchedPointData = await fetchPointDataAPI(token)
-        const fetchedPaymentData = await fetchPaymentMethodsAPI(token)
-        setPointData(fetchedPointData)
-        setPaymentData(fetchedPaymentData)
+        const fetchedPointData = await fetchPointDataAPI(token);
+        const fetchedPaymentData = await fetchPaymentMethodsAPI(token);
+        setPointData(fetchedPointData);
+        setPaymentData(fetchedPaymentData);
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          router.push(`/login?redirect=${window.location.pathname}`)
+          router.push(`/login?redirect=${window.location.pathname}`);
         } else {
-          toast.error(error.message)
+          toast.error(error.message);
         }
-        console.error('Terjadi kesalahan saat mengambil data:', error.message)
+        console.error("Terjadi kesalahan saat mengambil data:", error.message);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
 
-    fetchData()
-  }, [token])
+    fetchData();
+  }, [token]);
 
   useEffect(() => {
     async function fetchCheckout() {
       try {
-        const bookingId = dataCheckout?.bookingId
-        const data = await fetchCheckoutDataAPI(bookingId, token)
-        setDataCheckoutMax(data)
+        const bookingId = dataCheckout?.bookingId;
+        const data = await fetchCheckoutDataAPI(bookingId, token);
+        setDataCheckoutMax(data);
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          router.push(`/login?redirect=${window.location.pathname}`)
+          router.push(`/login?redirect=${window.location.pathname}`);
         } else {
-          toast.error(error.message)
+          toast.error(error.message);
         }
       }
     }
 
-    fetchCheckout()
-  }, [dataCheckout.bookingId])
+    fetchCheckout();
+  }, [dataCheckout.bookingId]);
 
   useEffect(() => {
     async function fetchCheckoutSuccess() {
       try {
-        const id = window.location.pathname.split('/').pop()
-        const data = await fetchCheckoutSuccessDataAPI(id, token)
-        setDataCheckout(data)
-        setOriginalTotalFee(data.totalFee)
+        const id = window.location.pathname.split("/").pop();
+        const data = await fetchCheckoutSuccessDataAPI(id, token);
+        setDataCheckout(data);
+        setOriginalTotalFee(data.totalFee);
       } catch (error) {
-        toast.error(error.message)
+        toast.error(error.message);
       }
     }
 
-    fetchCheckoutSuccess()
-  }, [token])
+    fetchCheckoutSuccess();
+  }, [token]);
 
-  const pointUse = dataCheckoutMax?.bookingDetails
+  const pointUse = dataCheckoutMax?.bookingDetails;
 
   useEffect(() => {
     if (
@@ -97,12 +97,12 @@ export default function CheckoutSuccessPage() {
       originalTotalFee
     ) {
       if (usePoint) {
-        const pointsToUse = Math.min(pointUse.MaxPointUse, pointData.points)
-        const discountedTotal = originalTotalFee - pointsToUse
+        const pointsToUse = Math.min(pointUse.MaxPointUse, pointData.points);
+        const discountedTotal = originalTotalFee - pointsToUse;
 
-        setDiscountedTotalFee(discountedTotal)
+        setDiscountedTotalFee(discountedTotal);
       } else {
-        setDiscountedTotalFee(originalTotalFee)
+        setDiscountedTotalFee(originalTotalFee);
       }
     }
   }, [
@@ -111,24 +111,24 @@ export default function CheckoutSuccessPage() {
     pointData?.points,
     pointUse?.MaxPointUse,
     originalTotalFee,
-  ])
+  ]);
 
   const handleChannelChange = (channel) => {
-    setSelectedChannel(channel)
-  }
+    setSelectedChannel(channel);
+  };
 
   const handlePayment = () => {
     if (!selectedChannel) {
-      toast.error('Pilih metode pembayaran terlebih dahulu!')
-      return
+      toast.error("Pilih metode pembayaran terlebih dahulu!");
+      return;
     }
 
-    setIsLoadingPayment(true)
+    setIsLoadingPayment(true);
 
     const selectedPaymentMethod = paymentData.find((p) =>
-      p.channels.some((channel) => channel.code === selectedChannel),
-    )
-    const paymentMethodId = selectedPaymentMethod?.code || ''
+      p.channels.some((channel) => channel.code === selectedChannel)
+    );
+    const paymentMethodId = selectedPaymentMethod?.code || "";
 
     postPaymentAPI({
       bookingId: dataCheckout.bookingId,
@@ -138,64 +138,65 @@ export default function CheckoutSuccessPage() {
       token,
     })
       .then((data) => {
-        setPaymentSuccess(data)
+        setPaymentSuccess(data);
       })
       .catch((error) => {
-        toast.error(error.message)
+        toast.error(error.message);
       })
       .finally(() => {
-        setIsLoadingPayment(false)
-      })
-  }
+        setIsLoadingPayment(false);
+      });
+  };
 
   const handleToggleUsePoint = () => {
     if (pointData?.points > 0 && pointUse?.MaxPointUse > 0) {
-      setUsePoint((prevUsePoint) => !prevUsePoint)
+      setUsePoint((prevUsePoint) => !prevUsePoint);
     }
-  }
+  };
 
   useEffect(() => {
     if (pointUse?.MaxPointUse && pointData?.points) {
       if (pointUse.MaxPointUse > pointData.points) {
-        setUsePoint(false)
+        setUsePoint(false);
       }
     }
-  }, [pointUse?.MaxPointUse, pointData?.points])
+  }, [pointUse?.MaxPointUse, pointData?.points]);
 
   useEffect(() => {
-    if (paymentSuccess?.message === 'success' && paymentSuccess?.data) {
-      const { paymentUrl, bookingId } = paymentSuccess?.data
+    if (paymentSuccess?.message === "success" && paymentSuccess?.data) {
+      const { paymentUrl, bookingId } = paymentSuccess?.data;
       if (paymentUrl) {
-        setIsLoadingSuccessPage(true) // Set status loading saat akan melakukan pembayaran
-        const paymentWindow = window.open(paymentUrl, '_blank')
+        setIsLoadingSuccessPage(true); // Set status loading saat akan melakukan pembayaran
+        const paymentWindow = window.open(paymentUrl, "_blank");
         if (
           !paymentWindow ||
           paymentWindow.closed ||
-          typeof paymentWindow.closed === 'undefined'
+          typeof paymentWindow.closed === "undefined"
         ) {
           // Jika pembukaan tab baru diblokir, redirect ke halaman pembayaran sukses
-          router.push(`/booking/${bookingId}`)
-          setIsLoadingSuccessPage(false) // Hentikan status loading jika redirect terjadi
+          router.push(`/booking/${bookingId}`);
+          setIsLoadingSuccessPage(false); // Hentikan status loading jika redirect terjadi
         } else {
           const interval = setInterval(() => {
             if (paymentWindow.closed) {
-              router.push(`/booking/${bookingId}`)
-              clearInterval(interval)
-              setIsLoadingSuccessPage(false) // Hentikan status loading jika tab ditutup
+              router.push(`/booking/${bookingId}`);
+              clearInterval(interval);
+              setIsLoadingSuccessPage(false); // Hentikan status loading jika tab ditutup
             }
-          }, 1000)
+          }, 1000);
         }
       } else if (bookingId) {
-        router.push(`/booking/${bookingId}`)
+        router.push(`/booking/${bookingId}`);
       }
     }
-  }, [paymentSuccess, router])
+  }, [paymentSuccess, router]);
   // console.log('dataCheckout', dataCheckout)
 
-  console.log('paymentSuccess', paymentSuccess)
+  console.log("paymentSuccess", paymentSuccess);
 
-  console.log('paymentData', paymentData)
-  console.log("selectedChannel", selectedChannel)
+  console.log("paymentData", paymentData);
+  console.log("selectedChannel", selectedChannel);
+  
 
   return (
     <Layout>
@@ -212,9 +213,9 @@ export default function CheckoutSuccessPage() {
             <h1 className="text-xl flex flex-col justify-center font-bold">
               Payment
             </h1>
-            <span className=" flex flex-col justify-center ">{'>'}</span>
+            <span className=" flex flex-col justify-center ">{">"}</span>
             <h1 className=" flex flex-col justify-center">
-              {dataCheckout.productType === 'activity' ? 'Activity' : ''}
+              {dataCheckout.productType === "activity" ? "Activity" : ""}
             </h1>
           </div>
           <div>
@@ -246,6 +247,7 @@ export default function CheckoutSuccessPage() {
                       selectedChannel={selectedChannel}
                       handleChannelChange={handleChannelChange}
                     />
+
                   </div>
                 ))}
             </div>
@@ -255,7 +257,7 @@ export default function CheckoutSuccessPage() {
               <div className="flex gap-1">
                 <h1 className="flex flex-col justify-center">Tukar </h1>
                 <div className="flex flex-col justify-center">
-                  {' '}
+                  {" "}
                   {pointData?.points} koin
                 </div>
               </div>
@@ -279,13 +281,13 @@ export default function CheckoutSuccessPage() {
               disabled={isLoadingPayment} // Men-disable tombol saat proses loading
             >
               {isLoadingPayment || isLoadingSuccessPage
-                ? 'Memproses...'
-                : 'Bayar'}{' '}
+                ? "Memproses..."
+                : "Bayar"}{" "}
               {/* Teks dinamis sesuai status loading */}
             </button>
           </div>
         </div>
       )}
     </Layout>
-  )
+  );
 }
