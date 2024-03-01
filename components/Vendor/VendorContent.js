@@ -9,6 +9,9 @@ import PackageCardVendor from "./PackageCardVendor";
 
 function VendorContent() {
   const {
+    handleTypeSelect,
+    isFilterApplied,
+    handleClearFilterVendor,
     activity,
     selectedTypes,
     setSelectedTypes,
@@ -16,6 +19,7 @@ function VendorContent() {
     selectedVendor,
     handleVendorChange,
     loading,
+    setLoading,
     notFound,
     allActivityVendor,
     activityVendor,
@@ -57,10 +61,44 @@ function VendorContent() {
     searchActivity,
     loadingVendorType,
     setLoadingVendorType,
+    handleApplyFilterAndSearch,
+    vendorsData,
+    handleApplyFilter,
+    handlePageChange,
+    fetchActivity,
+    fetchPackage,
+    fetchActivityVendor,
+    fetchPackageVendor,
+    currentPage,
+    fetchVendorType,
   } = useContext(VendorContext);
 
   const [activeDetail, setActiveDetail] = useState("products");
   const [showActivityNotFound, setShowActivityNotFound] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false); // State untuk mengontrol keadaan modal pencarian
+
+  // Tambahan useEffect untuk memperbarui data produk saat ada perubahan halaman
+  // useEffect(() => {
+  //   if (selectedVendor === "") {
+  //     fetchActivity(currentPage);
+  //     fetchPackage(currentPage);
+
+  //     // Jika ada vendor yang dipilih, maka ambil data produk dari vendor tersebut
+  //   } else {
+  //     fetchActivityVendor(currentPage);
+  //     fetchPackageVendor(currentPage);
+  //   }
+  // }, [selectedVendor, currentPage]);
+
+  // Fungsi untuk membuka atau menutup modal pencarian
+  const toggleSearchModal = () => {
+    setIsSearchModalOpen(!isSearchModalOpen);
+  };
+
+  const handleSearchAndCloseModal = () => {
+    searchActivity();
+    setIsSearchModalOpen(false); // Tutup modal setelah melakukan pencarian
+  };
 
   console.log("activityVendor", activityVendor);
   console.log("selectedVendor", selectedVendor);
@@ -68,45 +106,81 @@ function VendorContent() {
   console.log("packageVendor", packageVendor);
   console.log("vendorType", vendorType);
 
-  // useEffect(() => {
-  //   // Reset pagination saat loading
-  //   if (loading) {
-  //     setCurrentAllActivityPage(1);
-  //     setCurrentPackageVendor(1);
-  //   }
-  // }, [loading]);
-
-  // useEffect(() => {
-  //   if (selectedVendor === "") {
-  //     setActivityVendor(allActivityVendor);
-  //     setPackageVendor(allPackage);
-  //   }
-  // }, [selectedVendor]);
   return (
     <div className="mt-6 ml-6">
       <h1 className="text-2xl font-bold">Semua Vendor</h1>
       <div className="flex">
         <div className="mr-4">
-          <div className="flex flex-col gap-3">
-            <input
-              type="text"
-              value={tempSearchQuery} // Gunakan nilai sementara pencarian
-              onChange={handleSearchChange}
-              placeholder="Cari aktivitas..."
-              className="border rounded py-1 px-2 mr-2"
+          <button
+            onClick={toggleSearchModal}
+            className="bg-blue-500 text-white py-1 px-2 rounded mr-2"
+          >
+            Cari
+          </button>
+
+          {/* Modal pencarian */}
+          {isSearchModalOpen && (
+            <div className="fixed z-10 inset-0 overflow-y-auto">
+              <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                {/* Latar belakang gelap */}
+                <div className="fixed inset-0 transition-opacity">
+                  <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+
+                {/* Konten modal */}
+                <div
+                  className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="modal-headline"
+                >
+                  {/* Header modal */}
+                  <div className="bg-gray-200 px-4 py-2">
+                    <h3 className="text-lg font-bold">Pencarian Aktivitas</h3>
+                  </div>
+
+                  {/* Body modal */}
+                  <div className="bg-white px-4 pt-5 pb-4">
+                    {/* Input pencarian */}
+                    <input
+                      type="text"
+                      value={tempSearchQuery}
+                      onChange={handleSearchChange}
+                      placeholder="Cari aktivitas..."
+                      className="border rounded py-1 px-2 w-full mb-4"
+                    />
+
+                    {/* Tombol untuk melakukan pencarian */}
+                    <button
+                      onClick={handleSearchAndCloseModal}
+                      className="bg-blue-500 text-white py-1 px-2 rounded mr-2"
+                    >
+                      Cari
+                    </button>
+
+                    {/* Tombol untuk menutup modal */}
+                    <button
+                      onClick={toggleSearchModal}
+                      className="bg-red-500 text-white py-1 px-2 rounded"
+                    >
+                      Tutup
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div>
+            <PriceFilter
+              minPrice={tempMinPrice}
+              maxPrice={tempMaxPrice}
+              setMinPrice={setTempMinPrice}
+              setMaxPrice={setTempMaxPrice}
+              handleClearFilter={handleClearFilter}
+              filtering={filtering}
+              handleFilterChange={handleFilterChange}
             />
-            <button
-              onClick={searchActivity}
-              className="bg-blue-500 text-white py-1 px-2 rounded mr-2"
-            >
-              Cari
-            </button>
-            <button
-              onClick={handleClearFilter}
-              className="bg-red-500 text-white py-1 px-2 rounded"
-            >
-              Clear Filter
-            </button>
+            <button onClick={handleApplyFilterAndSearch}>Terapkan</button>
           </div>
           <VendorTypes
             activity={activity}
@@ -114,10 +188,13 @@ function VendorContent() {
             handleTypeChange={handleTypeChange}
             setSelectedTypes={setSelectedTypes}
             vendorType={vendorType}
+            handleApplyFilter={handleApplyFilter}
+            handleClearFilterVendor={handleClearFilterVendor}
+            handleTypeSelect={handleTypeSelect}
           />
           <div className="mt-5">Pilih Vendor:</div>
           <div className="flex flex-col max-h-[100px] overflow-x-hidden overflow-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-300">
-            {activity?.data?.map((vendor) => (
+            {vendorsData?.data?.map((vendor) => (
               <VendorOptions
                 vendor={vendor}
                 key={vendor.id}
@@ -129,18 +206,6 @@ function VendorContent() {
                 }}
               />
             ))}
-          </div>
-
-          <div>
-            <PriceFilter
-              minPrice={tempMinPrice}
-              maxPrice={tempMaxPrice}
-              setMinPrice={setTempMinPrice}
-              setMaxPrice={setTempMaxPrice}
-              handleClearFilter={handleClearFilter}
-              filtering={filtering}
-              handleFilterChange={handleFilterChange}
-            />
           </div>
         </div>
 
@@ -218,6 +283,9 @@ function VendorContent() {
                         currentPage={currentActivityVendor}
                         totalPages={totalActivityVendor}
                         setCurrentPage={setCurrentActivityVendor}
+                        handlePageChange={handlePageChange}
+                        setLoading={setLoading}
+                        loading={loading}
                       />
                     ) : (
                       ""
@@ -229,6 +297,9 @@ function VendorContent() {
                           currentPage={currentAllActivityPage}
                           totalPages={totalActivityPages}
                           setCurrentPage={setCurrentAllActivityPage}
+                          handlePageChange={handlePageChange}
+                          setLoading={setLoading}
+                          loading={loading}
                         />
                       )}
                   </div>
@@ -274,6 +345,9 @@ function VendorContent() {
                         currentPage={currentPackageVendor}
                         totalPages={totalPackageVendor}
                         setCurrentPage={setCurrentPackageVendor}
+                        handlePageChange={handlePageChange}
+                        loading={loading}
+                        setLoading={setLoading}
                       />
                     ) : (
                       ""
@@ -285,6 +359,9 @@ function VendorContent() {
                           currentPage={currentAllPackagePage}
                           totalPages={totalPackagePages}
                           setCurrentPage={setCurrentAllPackagePage}
+                          handlePageChange={handlePageChange}
+                          setLoading={setLoading}
+                          loading={loading}
                         />
                       )}
                   </div>

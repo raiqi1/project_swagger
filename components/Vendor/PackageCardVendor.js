@@ -21,7 +21,7 @@ export default function PackageCardVendor({ packageCard }) {
             src={
               packageCard.thumbnailUrl
                 ? packageCard.thumbnailUrl
-                : "../../../images/root.png"
+                : "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg"
             }
             alt={packageCard.thumbnailUrl}
             className="rounded shadow object-cover h-64 w-[250px]"

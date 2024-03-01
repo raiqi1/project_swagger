@@ -10,9 +10,9 @@ export default function PriceFilter({
   handleClearFilter,
   isLoading,
 }) {
-  const applyFilter = () => {
-    handleFilterChange(); // Panggil fungsi handleFilterChange untuk menerapkan filter
-  };
+  // const applyFilter = () => {
+  //   handleFilterChange(); // Panggil fungsi handleFilterChange untuk menerapkan filter
+  // };
 
   return (
     <div className="mr-5 flex flex-col gap-2 mt-3 p-1">
@@ -35,7 +35,7 @@ export default function PriceFilter({
         />
       </div>
       <div className="flex justify-between">
-        <button
+        {/* <button
           className={classNames("bg-red-500 text-white p-1 rounded", {
             "opacity-50 cursor-not-allowed": isLoading,
           })}
@@ -43,7 +43,7 @@ export default function PriceFilter({
           disabled={isLoading}
         >
           <h1 className="text-sm">{isLoading ? "Menerapkan..." : "Terapkan"}</h1>
-        </button>
+        </button> */}
         <button
           className={classNames("bg-gray-300 text-black p-1 rounded", {
             "opacity-50 cursor-not-allowed": isLoading,

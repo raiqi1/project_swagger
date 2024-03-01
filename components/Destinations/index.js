@@ -64,7 +64,7 @@ export default function DestinationPage({ data }) {
               <span className="flex flex-col justify-center">
                 <img src="../../../rating.svg" alt="" className="w-4" />
               </span>
-              <h1 className="ml-1 mr-1">{data.review_score.toFixed(1)}</h1>
+              <h1 className="ml-1 mr-1">{data.review_score?.toFixed(1)}</h1>
             </div>
             <h1>({data.review_count} Reviews)</h1>
           </div>

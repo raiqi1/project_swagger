@@ -4,6 +4,9 @@ import DestinationPage from "../components/Destinations";
 import { useRouter } from "next/router";
 import { set } from "mongoose";
 
+// Import icon yang diperlukan dari library atau lokal
+import { FaSearch } from "react-icons/fa";
+
 export default function Page() {
   const router = useRouter();
   const [desData, setDesData] = useState([]);
@@ -50,7 +53,7 @@ export default function Page() {
 
   useEffect(() => {
     const { page = 1, limit = 10, day = 1, name = "" } = router.query;
-    const queryParams = `?page=${page}&limit=${limit}&day=${day}&name=${name}`;
+    const queryParams = `?limit=${limit}&day=${day}&name=${name}&page=${page}`;
     fetchDestinations(queryParams);
   }, [
     router.query.page,
@@ -109,7 +112,11 @@ export default function Page() {
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mx-auto mt-4"></div>
         )}
         {error && <p>{error}</p>}
-        <div className="search-container">
+
+        {/* Pencarian yang telah diperbaiki tata letaknya */}
+        <div className="search-container flex justify-center">
+          {" "}
+          {/* Menengahkan konten secara horizontal */}
           <input
             type="text"
             value={tempSearchQuery}
@@ -118,12 +125,13 @@ export default function Page() {
             className="search-input"
           />
           <button onClick={handleSearch} className="search-button">
-            Cari
+            <FaSearch /> {/* Icon pencarian */}
           </button>
           {searchLoading && (
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
           )}
         </div>
+
         {!loading && desData.length > 0 && (
           <div className="flex flex-row flex-wrap justify-around w-4/5 mx-auto">
             {desData.map((data, index) => (
@@ -131,6 +139,7 @@ export default function Page() {
             ))}
           </div>
         )}
+
         {!loading && (
           <div className="pagination mt-4 flex justify-center items-center">
             <button

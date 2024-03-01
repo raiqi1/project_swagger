@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 import Theme from "./Theme";
 
 export default function Layout({ title, children }) {
-
   const { state } = useContext(Store);
   const { cart } = state;
   const [cartItemsCount, setCartItemsCount] = useState(0);
@@ -38,6 +37,16 @@ export default function Layout({ title, children }) {
     Cookies.remove("cart");
     router.push("/login");
     toast.success("Anda telah berhasil keluar.");
+  };
+
+  const handleActivity = (e) => {
+    e.preventDefault();
+    router.push(`/activity?page=${query}`);
+  };
+
+  const handleVendor = (e) => {
+    e.preventDefault();
+    router.push(`/vendor?query=${query}`);
   };
 
   return (
@@ -79,15 +88,16 @@ export default function Layout({ title, children }) {
               <div className=" mr-3">
                 <Theme />
               </div>
-              <Link href={`/vendor`}>
+              <button onClick={handleVendor}>
                 <span className="p-2">Vendor</span>
-              </Link>
+              </button>
               <Link href={`/packages`}>
                 <span className="p-2">Packages</span>
               </Link>
-              <Link href={`/activity`}>
-                <span>Aktivitas</span>
-              </Link>
+              <button onClick={handleActivity}>
+                <span className="p-2">Activity</span>
+              </button>
+
               <Link href="/cart" className="p-2">
                 Cart
                 {cartItemsCount > 0 && (

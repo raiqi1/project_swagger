@@ -1,112 +1,118 @@
-import React, { useEffect, useState } from 'react'
-import Layout from '../../components/Layout'
-import ActivityPage from '../../components/Activity/ActivityPage'
-import Galeri from '../../components/Activity/Galery'
-import Terms from '../../components/Activity/Terms'
-import ResponsiveAct from '../../components/Activity/ResponsiveAct'
+import React, { useEffect, useState } from "react";
+import Layout from "../../components/Layout";
+import ActivityPage from "../../components/Activity/ActivityPage";
+import Galeri from "../../components/Activity/Galery";
+import Terms from "../../components/Activity/Terms";
+import ResponsiveAct from "../../components/Activity/ResponsiveAct";
 
 export default function ActivityDetails() {
-  const [activity, setActivity] = useState({})
-  const [images, setImages] = useState([])
-  const [terms, setTerms] = useState([])
-  const [activeDetail, setActiveDetail] = useState('galery')
-  const [loading, setLoading] = useState(true)
+  const [activity, setActivity] = useState({});
+  const [images, setImages] = useState([]);
+  const [terms, setTerms] = useState([]);
+  const [activeDetail, setActiveDetail] = useState("galery");
+  const [loading, setLoading] = useState(true);
 
   const fetchDetails = async (id) => {
     try {
       const res = await fetch(
         `https://api.dev.vacaba.id/api/v1/activity-service/activity/${id}`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'X-Api-Key': 'VACABADEV',
+            "Content-Type": "application/json",
+            "X-Api-Key": "VACABADEV",
           },
-        },
-      )
-      const data = await res.json()
-      setActivity(data)
+        }
+      );
+      const data = await res.json();
+      setActivity(data);
     } catch (error) {
-      console.error('Terjadi kesalahan saat mengambil detail aktivitas:', error)
+      console.error(
+        "Terjadi kesalahan saat mengambil detail aktivitas:",
+        error
+      );
     }
-  }
+  };
 
   const fetchImages = async (id) => {
     try {
       const res = await fetch(
         `https://api.dev.vacaba.id/api/v1/activity-service/activity/${id}/gallery`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'X-Api-Key': 'VACABADEV',
+            "Content-Type": "application/json",
+            "X-Api-Key": "VACABADEV",
           },
-        },
-      )
-      const dataImages = await res.json()
-      setImages(dataImages)
+        }
+      );
+      const dataImages = await res.json();
+      setImages(dataImages);
     } catch (error) {
-      console.error('Terjadi kesalahan saat mengambil gambar aktivitas:', error)
+      console.error(
+        "Terjadi kesalahan saat mengambil gambar aktivitas:",
+        error
+      );
     }
-  }
+  };
 
   const fetchTerms = async (id) => {
     try {
       const resp = await fetch(
         `https://api.dev.vacaba.id/api/v1/activity-service/activity/${id}/terms-conditions`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'X-Api-Key': 'VACABADEV',
+            "Content-Type": "application/json",
+            "X-Api-Key": "VACABADEV",
           },
-        },
-      )
-      const dataTerms = await resp.json()
-      setTerms(dataTerms)
+        }
+      );
+      const dataTerms = await resp.json();
+      setTerms(dataTerms);
     } catch (error) {
       console.error(
-        'Terjadi kesalahan saat mengambil Terms and Conditions:',
-        error,
-      )
+        "Terjadi kesalahan saat mengambil Terms and Conditions:",
+        error
+      );
     }
-  }
+  };
 
   useEffect(() => {
-    const id = window.location.pathname.split('/').pop()
+    const id = window.location.pathname.split("/").pop();
     const fetchData = async () => {
-      setLoading(true)
-      await Promise.all([fetchDetails(id), fetchImages(id), fetchTerms(id)])
-      setLoading(false)
-    }
-    fetchData()
+      setLoading(true);
+      await Promise.all([fetchDetails(id), fetchImages(id), fetchTerms(id)]);
+      setLoading(false);
+    };
+    fetchData();
 
-    const screenWidth = window.innerWidth
+    const screenWidth = window.innerWidth;
     if (screenWidth <= 768) {
-      setActiveDetail('overview')
+      setActiveDetail("overview");
     } else {
-      setActiveDetail('galery')
+      setActiveDetail("galery");
     }
 
     const handleResize = () => {
-      const newScreenWidth = window.innerWidth
+      const newScreenWidth = window.innerWidth;
       if (newScreenWidth <= 768) {
-        setActiveDetail('overview')
+        setActiveDetail("overview");
       } else {
-        setActiveDetail('galery')
+        setActiveDetail("galery");
       }
-    }
+    };
 
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
-  console.log('activity', activity)
-  console.log('images', images)
-  console.log('terms', terms)
+  console.log("activity", activity);
+  console.log("images", images);
+  console.log("terms", terms);
 
   return (
     <Layout>
@@ -125,11 +131,11 @@ export default function ActivityDetails() {
               <ul className="flex gap-8 w-full">
                 <li>
                   <button
-                    onClick={() => setActiveDetail('galery')}
+                    onClick={() => setActiveDetail("galery")}
                     className={`transition ${
-                      activeDetail === 'galery'
-                        ? 'border-b-2 border-black'
-                        : 'border-b hover:border-b-2 hover:border-black'
+                      activeDetail === "galery"
+                        ? "border-b-2 border-black"
+                        : "border-b hover:border-b-2 hover:border-black"
                     }`}
                   >
                     Galeri
@@ -137,11 +143,11 @@ export default function ActivityDetails() {
                 </li>
                 <li className="md:hidden">
                   <button
-                    onClick={() => setActiveDetail('overview')}
+                    onClick={() => setActiveDetail("overview")}
                     className={`transition ${
-                      activeDetail === 'overview'
-                        ? 'border-b-2 border-black text-black'
-                        : 'border-b hover:border-b-2 hover:border-black'
+                      activeDetail === "overview"
+                        ? "border-b-2 border-black text-black"
+                        : "border-b hover:border-b-2 hover:border-black"
                     }`}
                   >
                     Overview
@@ -150,11 +156,11 @@ export default function ActivityDetails() {
 
                 <li>
                   <button
-                    onClick={() => setActiveDetail('questions')}
+                    onClick={() => setActiveDetail("questions")}
                     className={`transition ${
-                      activeDetail === 'questions'
-                        ? 'border-b-2 border-black'
-                        : 'border-b hover:border-b-2 hover:border-black'
+                      activeDetail === "questions"
+                        ? "border-b-2 border-black"
+                        : "border-b hover:border-b-2 hover:border-black"
                     }`}
                   >
                     Terms and Conditions
@@ -162,17 +168,17 @@ export default function ActivityDetails() {
                 </li>
               </ul>
               <div>
-                {activeDetail === 'galery' && (
+                {activeDetail === "galery" && (
                   <section className="mt-4">
                     <Galeri image={images} />
                   </section>
                 )}
-                {activeDetail === 'overview' && (
+                {activeDetail === "overview" && (
                   <section className="mt-4 md:hidden">
                     <ResponsiveAct activity={activity} />
                   </section>
                 )}
-                {activeDetail === 'questions' && (
+                {activeDetail === "questions" && (
                   <section className="mt-4">
                     <Terms terms={terms} />
                   </section>
@@ -183,5 +189,5 @@ export default function ActivityDetails() {
         </div>
       )}
     </Layout>
-  )
+  );
 }

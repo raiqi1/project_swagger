@@ -24,7 +24,7 @@ export default function PaymentMethods({
           >
             <AiOutlineQuestionCircle className="w-6 h-6" />
             <span className="ml-1 opacity-0 transition-opacity duration-0 absolute text-xs">
-              How to Pay 
+              How to Pay
             </span>
           </a>
         )}
